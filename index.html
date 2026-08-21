@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#4facfe" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>WebOS 模拟器</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="stylesheet" href="css/system.css" />
+<link rel="stylesheet" href="css/window-manager.css" />
+<link rel="stylesheet" href="css/apps.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ============ 开机画面 ============ -->
+  <div id="boot-screen">
+    <div class="boot-logo">🌐</div>
+    <div class="boot-title">W E B O S</div>
+  </div>
+
+  <!-- ============ 状态栏（时间/信号/电量） ============ -->
+  <div id="status-bar"></div>
+
+  <!-- ============ 桌面层（壁纸 + App Grid + Dock） ============ -->
+  <div id="desktop-layer">
+    <div id="app-grid"></div>
+    <div id="dock"></div>
+  </div>
+
+  <!-- ============ 窗口层（所有已打开 APP 的窗口挂载于此） ============ -->
+  <div id="window-layer"></div>
+
+  <!-- ============ 多任务切换视图 ============ -->
+  <div id="task-switcher-layer"></div>
+
+  <!-- ============ Home 按钮 / 指示条 ============ -->
+  <div id="home-button" role="button" aria-label="返回主屏幕"></div>
+
+  <!-- ============ 全局 Toast 提示 ============ -->
+  <div id="toast"></div>
+
+</div>
+
+<script type="module" src="js/core/boot.js"></script>
+</body>
+</html>

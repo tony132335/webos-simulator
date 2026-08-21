@@ -1,0 +1,275 @@
+/*
+ * system.css —— 系统级样式
+ * ---------------------------------------------------------
+ * 定义全局 CSS 变量、基础重置、开机画面、状态栏、桌面网格、Dock 栏、
+ * 图标编辑模式（抖动动画）、Toast 提示等系统级 UI。
+ */
+
+:root {
+  --sb-height: 44px; /* 状态栏高度 */
+  --dock-height: 88px; /* Dock 栏高度 */
+  --home-indicator-height: 34px;
+  --accent: #0a84ff;
+  --bg-wallpaper-start: #4facfe;
+  --bg-wallpaper-end: #7367f0;
+  --glass-bg: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --text-on-dark: #ffffff;
+  --radius-app: 18px;
+  --radius-win: 0px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Segoe UI', sans-serif;
+  background: #000;
+  color: #1c1c1e;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input,
+textarea {
+  font-family: inherit;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ============ 开机画面 ============ */
+#boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: linear-gradient(160deg, #0f0f1e, #1a1a2e);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: opacity 0.6s ease;
+}
+#boot-screen.boot-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.boot-logo {
+  font-size: 56px;
+  margin-bottom: 16px;
+  animation: boot-pulse 1.4s ease-in-out infinite;
+}
+.boot-title {
+  font-size: 15px;
+  letter-spacing: 2px;
+  opacity: 0.75;
+}
+.boot-error {
+  color: #ff6b6b;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+}
+@keyframes boot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.7; }
+}
+
+/* ============ 桌面容器（壁纸层） ============ */
+#desktop-layer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, var(--bg-wallpaper-start), var(--bg-wallpaper-end));
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(var(--sb-height) + var(--safe-top));
+}
+
+/* ============ 状态栏 ============ */
+#status-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--sb-height) + var(--safe-top));
+  padding-top: var(--safe-top);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 16px;
+  color: var(--text-on-dark);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  z-index: 500;
+  pointer-events: none;
+}
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-battery-pct {
+  font-size: 13px;
+  margin-right: 2px;
+  opacity: 0.9;
+}
+
+/* ============ App Grid（桌面图标网格） ============ */
+#app-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px 8px;
+  padding: 24px 20px 8px;
+  align-content: start;
+  overflow-y: auto;
+}
+
+.app-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.app-icon-glyph {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-app);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s ease;
+}
+.app-icon:active .app-icon-glyph {
+  transform: scale(0.9);
+}
+.app-icon-label {
+  font-size: 12px;
+  color: var(--text-on-dark);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  max-width: 68px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app-icon-remove {
+  display: none;
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+}
+
+/* 长按图标进入编辑模式：全部图标抖动 */
+#desktop-layer.edit-mode .app-icon-glyph,
+#desktop-layer.edit-mode .app-icon-dock .app-icon-glyph {
+  animation: icon-jiggle 0.28s infinite ease-in-out;
+}
+#desktop-layer.edit-mode .app-icon-remove {
+  display: block;
+}
+@keyframes icon-jiggle {
+  0% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.5deg); }
+  100% { transform: rotate(-1.5deg); }
+}
+
+/* ============ Dock 栏 ============ */
+#dock {
+  height: var(--dock-height);
+  padding: 10px 18px calc(14px + var(--safe-bottom));
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--glass-border);
+}
+.app-icon-dock .app-icon-glyph {
+  width: 52px;
+  height: 52px;
+  font-size: 26px;
+}
+
+/* ============ Toast 提示 ============ */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 120px;
+  transform: translate(-50%, 20px);
+  background: rgba(30, 30, 30, 0.92);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 22px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 9000;
+  max-width: 80%;
+  text-align: center;
+}
+#toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ============ Home 指示条 / Home 按钮 ============ */
+#home-button {
+  position: fixed;
+  left: 50%;
+  bottom: calc(6px + var(--safe-bottom));
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 8000;
+}
+body.dark-context #home-button {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* 滚动条美化（桌面端调试用） */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
